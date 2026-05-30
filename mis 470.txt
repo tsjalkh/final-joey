@@ -1,0 +1,112 @@
+package com.example.carrental;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException; // [cite: 32, 53]
+import android.database.sqlite.SQLiteDatabase; // 
+import android.database.sqlite.SQLiteOpenHelper; // [cite: 33, 54]
+
+public class DatabaseHelper extends SQLiteOpenHelper { // 
+
+    // Database Name and Version [cite: 40, 42, 57]
+    private static final String DATABASE_NAME = "CarRental.db";
+    private static final int DATABASE_VERSION = 1;
+
+    // Table Names
+    public static final String TABLE_CARS = "cars";
+    public static final String TABLE_USERS = "users";
+    public static final String TABLE_BOOKINGS = "bookings";
+
+    // CARS Columns
+    public static final String CAR_ID = "car_id";
+    public static final String CAR_BRAND = "brand";
+    public static final String CAR_MODEL = "model";
+    public static final String CAR_YEAR = "year";
+    public static final String CAR_PRICE = "price_per_day";
+    public static final String CAR_AVAILABLE = "is_available";
+
+    // USERS Columns
+    public static final String USER_ID = "user_id";
+    public static final String USER_NAME = "full_name";
+    public static final String USER_EMAIL = "email";
+
+    // BOOKINGS Columns
+    public static final String BOOKING_ID = "booking_id";
+    public static final String BOOKING_USER_ID = "user_id_fk";
+    public static final String BOOKING_CAR_ID = "car_id_fk";
+    public static final String BOOKING_START = "start_date";
+    public static final String BOOKING_END = "end_date";
+    public static final String BOOKING_COST = "total_cost";
+
+    // Constructor [cite: 38, 58]
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION); // [cite: 59]
+    }
+
+    // Automatically triggered when DB is created for the first time [cite: 72, 73]
+    @Override
+    public void onCreate(SQLiteDatabase db) { // [cite: 61]
+        
+        // 1. Create Cars Table [cite: 76, 88]
+        String CREATE_CARS_TABLE = "CREATE TABLE " + TABLE_CARS + " ("
+                + CAR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " // [cite: 100]
+                + CAR_BRAND + " TEXT NOT NULL, " // [cite: 98, 101]
+                + CAR_MODEL + " TEXT NOT NULL, "
+                + CAR_YEAR + " INTEGER, " // [cite: 96]
+                + CAR_PRICE + " REAL, " // [cite: 97]
+                + CAR_AVAILABLE + " INTEGER DEFAULT 1);"; // [cite: 102] 1 = true, 0 = false
+
+        // 2. Create Users Table
+        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + " ("
+                + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + USER_NAME + " TEXT NOT NULL, "
+                + USER_EMAIL + " TEXT NOT NULL UNIQUE);";
+
+        // 3. Create Bookings Table (Relational Mapping)
+        String CREATE_BOOKINGS_TABLE = "CREATE TABLE " + TABLE_BOOKINGS + " ("
+                + BOOKING_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + BOOKING_USER_ID + " INTEGER, "
+                + BOOKING_CAR_ID + " INTEGER, "
+                + BOOKING_START + " TEXT, "
+                + BOOKING_END + " TEXT, "
+                + BOOKING_COST + " REAL);";
+
+        // Execute queries to build the actual tables [cite: 62, 81]
+        db.execSQL(CREATE_CARS_TABLE);
+        db.execSQL(CREATE_USERS_TABLE);
+        db.execSQL(CREATE_BOOKINGS_TABLE);
+        
+        // Optional: Fill initial dummy data [cite: 45, 77]
+        db.execSQL("INSERT INTO " + TABLE_CARS + " (brand, model, year, price_per_day) VALUES ('Toyota', 'Camry', 2024, 45.0);");
+        db.execSQL("INSERT INTO " + TABLE_CARS + " (brand, model, year, price_per_day) VALUES ('Ford', 'Mustang', 2025, 85.0);");
+    }
+
+    // Triggered when DATABASE_VERSION is increased [cite: 110, 111, 124, 126]
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { // [cite: 65, 113]
+        // Drop existing tables and rebuild them according to new schema [cite: 64, 127, 128, 129]
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CARS); // [cite: 66]
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKINGS);
+        onCreate(db); // [cite: 67]
+    }
+}
+DatabaseHelper dbHelper = new DatabaseHelper(MainActivity.this); //to safety add rows 
+SQLiteDatabase db = dbHelper.getWritableDatabase(); // [cite: 141]
+
+ContentValues values = new ContentValues(); // [cite: 151]
+values.put(DatabaseHelper.USER_NAME, "Alice Smith"); // [cite: 152]
+values.put(DatabaseHelper.USER_EMAIL, "alice@email.com"); // [cite: 153]
+
+// Insert the line into the users table [cite: 150, 155]
+long newRowId = db.insert(DatabaseHelper.TABLE_USERS, null, values);
+SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+ContentValues values = new ContentValues();
+values.put(DatabaseHelper.CAR_AVAILABLE, 0); // 0 = not available anymore
+
+String whereClause = DatabaseHelper.CAR_ID + " = ?"; // [cite: 161]
+String[] whereArgs = { "1" }; // Modifies the car whose ID is 1 [cite: 162]
+
+db.update(DatabaseHelper.TABLE_CARS, values, whereClause, whereArgs); // [cite: 158]
