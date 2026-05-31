@@ -237,14 +237,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val images = imagesStr?.split(",") ?: emptyList()
                 
                 carList.add(MainActivity.Car(
-                    id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)),
-                    name = cursor.getString(cursor.getColumnIndexOrThrow(CAR_MODEL)),
-                    category = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CATEGORY)),
-                    engine = cursor.getString(cursor.getColumnIndexOrThrow(CAR_ENGINE)),
-                    power = cursor.getString(cursor.getColumnIndexOrThrow(CAR_POWER)),
-                    drivetrain = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DRIVETRAIN)),
+                    id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)) ?: "",
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(CAR_MODEL)) ?: "",
+                    category = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CATEGORY)) ?: "",
+                    engine = cursor.getString(cursor.getColumnIndexOrThrow(CAR_ENGINE)) ?: "",
+                    power = cursor.getString(cursor.getColumnIndexOrThrow(CAR_POWER)) ?: "",
+                    drivetrain = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DRIVETRAIN)) ?: "",
                     seats = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_SEATS)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DESC)),
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DESC)) ?: "",
                     dailyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_DAY)),
                     weeklyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_WEEK)),
                     monthlyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_MONTH)),
