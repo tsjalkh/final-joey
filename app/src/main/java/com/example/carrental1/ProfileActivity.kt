@@ -60,6 +60,7 @@ class ProfileActivity : AppCompatActivity() {
         if (userId != -1) {
             val dbHelper = DatabaseHelper(this)
             val user = dbHelper.getUserById(userId)
+            dbHelper.close()
             if (user != null) {
                 textProfileName.text = user.name
                 textProfileEmail.text = user.email
@@ -80,6 +81,7 @@ class ProfileActivity : AppCompatActivity() {
         if (userId != -1) {
             val dbHelper = DatabaseHelper(this)
             val booking = dbHelper.getLatestBooking(userId)
+            dbHelper.close()
 
             if (booking != null) {
                 textRentalDetails.text = getString(
