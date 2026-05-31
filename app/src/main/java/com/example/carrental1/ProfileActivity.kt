@@ -72,6 +72,7 @@ class ProfileActivity : AppCompatActivity() {
         // Fallback
         textProfileName.text = userPrefs.getString("userName", "User")
         textProfileEmail.text = userPrefs.getString("userEmail", "N/A")
+        textProfilePhone.text = "N/A"
     }
 
     private fun loadRentalHistory() {
@@ -100,6 +101,7 @@ class ProfileActivity : AppCompatActivity() {
         }
         
         textRentalDetails.text = getString(R.string.no_rentals_yet)
+        textProfilePayment.text = "N/A"
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

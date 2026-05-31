@@ -26,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 val dbHelper = DatabaseHelper(this)
                 val user = dbHelper.checkUser(email, password)
+                dbHelper.close()
 
                 if (user != null) {
                     // Save current user info to SharedPreferences for Profile and Autofill

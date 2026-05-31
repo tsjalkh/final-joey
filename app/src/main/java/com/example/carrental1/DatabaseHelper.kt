@@ -210,13 +210,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         if (cursor.moveToFirst()) {
             booking = BookingInfo(
                 id = cursor.getLong(cursor.getColumnIndexOrThrow(BOOKING_ID)),
-                carName = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_NAME)),
-                carCode = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_CODE)),
-                start = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_START)),
-                end = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_END)),
-                duration = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_DURATION)),
+                carName = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_NAME)) ?: "",
+                carCode = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_CODE)) ?: "",
+                start = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_START)) ?: "",
+                end = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_END)) ?: "",
+                duration = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_DURATION)) ?: "",
                 cost = cursor.getDouble(cursor.getColumnIndexOrThrow(BOOKING_COST)),
-                paymentMethod = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_PAYMENT_METHOD))
+                paymentMethod = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_PAYMENT_METHOD)) ?: ""
             )
         }
         cursor.close()
@@ -237,14 +237,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val images = imagesStr?.split(",") ?: emptyList()
                 
                 carList.add(MainActivity.Car(
-                    id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)),
-                    name = cursor.getString(cursor.getColumnIndexOrThrow(CAR_MODEL)),
-                    category = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CATEGORY)),
-                    engine = cursor.getString(cursor.getColumnIndexOrThrow(CAR_ENGINE)),
-                    power = cursor.getString(cursor.getColumnIndexOrThrow(CAR_POWER)),
-                    drivetrain = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DRIVETRAIN)),
+                    id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)) ?: "",
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(CAR_MODEL)) ?: "",
+                    category = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CATEGORY)) ?: "",
+                    engine = cursor.getString(cursor.getColumnIndexOrThrow(CAR_ENGINE)) ?: "",
+                    power = cursor.getString(cursor.getColumnIndexOrThrow(CAR_POWER)) ?: "",
+                    drivetrain = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DRIVETRAIN)) ?: "",
                     seats = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_SEATS)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DESC)),
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DESC)) ?: "",
                     dailyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_DAY)),
                     weeklyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_WEEK)),
                     monthlyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_MONTH)),
