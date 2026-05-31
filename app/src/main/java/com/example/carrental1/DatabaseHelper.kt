@@ -210,13 +210,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         if (cursor.moveToFirst()) {
             booking = BookingInfo(
                 id = cursor.getLong(cursor.getColumnIndexOrThrow(BOOKING_ID)),
-                carName = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_NAME)),
-                carCode = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_CODE)),
-                start = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_START)),
-                end = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_END)),
-                duration = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_DURATION)),
+                carName = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_NAME)) ?: "",
+                carCode = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_CODE)) ?: "",
+                start = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_START)) ?: "",
+                end = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_END)) ?: "",
+                duration = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_DURATION)) ?: "",
                 cost = cursor.getDouble(cursor.getColumnIndexOrThrow(BOOKING_COST)),
-                paymentMethod = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_PAYMENT_METHOD))
+                paymentMethod = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_PAYMENT_METHOD)) ?: ""
             )
         }
         cursor.close()
