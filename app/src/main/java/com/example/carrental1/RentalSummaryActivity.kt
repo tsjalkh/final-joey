@@ -15,11 +15,11 @@ class RentalSummaryActivity : AppCompatActivity() {
 
         val bookingId = intent.getLongExtra("bookingId", -1)
         val carId = intent.getStringExtra("carId") ?: "N/A"
-        val carName = intent.getStringExtra("carName")
-        val fullName = intent.getStringExtra("fullName")
-        val email = intent.getStringExtra("email")
-        val duration = intent.getStringExtra("duration")
-        val paymentMethod = intent.getStringExtra("paymentMethod")
+        val carName = intent.getStringExtra("carName") ?: "N/A"
+        val fullName = intent.getStringExtra("fullName") ?: "N/A"
+        val email = intent.getStringExtra("email") ?: "N/A"
+        val duration = intent.getStringExtra("duration") ?: "N/A"
+        val paymentMethod = intent.getStringExtra("paymentMethod") ?: "N/A"
         val price = intent.getIntExtra("price", 0)
 
         textSummary.text = getString(

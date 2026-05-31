@@ -34,6 +34,7 @@ class PaymentActivity : AppCompatActivity() {
     private var carName: String = ""
     private var basePrice: Int = 0
     private var packageType: String = ""
+    private var originalPackageType: String = ""
     private var dailyRate: Int = 0
     
     private var startDate: Calendar = Calendar.getInstance()
@@ -53,6 +54,7 @@ class PaymentActivity : AppCompatActivity() {
         carName = intent.getStringExtra("carName") ?: ""
         basePrice = intent.getIntExtra("price", 0)
         packageType = intent.getStringExtra("duration") ?: ""
+        originalPackageType = packageType
         dailyRate = intent.getIntExtra("dailyPrice", basePrice)
 
         textCarName = findViewById(R.id.textPaymentCarName)
@@ -119,11 +121,14 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun updateEndBasedOnPackage() {
         endDate = startDate.clone() as Calendar
+        packageType = originalPackageType
+        basePrice = intent.getIntExtra("price", 0)
         when (packageType) {
             "1 day" -> endDate.add(Calendar.DAY_OF_YEAR, 1)
             "1 week" -> endDate.add(Calendar.DAY_OF_YEAR, 7)
             "1 month" -> endDate.add(Calendar.MONTH, 1)
         }
+        textPackage.text = getString(R.string.selected_package_format, packageType, basePrice)
     }
 
     private fun calculateCustomPrice() {
@@ -192,9 +197,7 @@ class PaymentActivity : AppCompatActivity() {
         
         if (userId != -1) {
             val dbHelper = DatabaseHelper(this)
-            // Update phone in DB
             dbHelper.updatePhone(userId, phone)
-            
             generatedBookingId = dbHelper.addBooking(
                 userId = userId,
                 carName = carName,
@@ -205,6 +208,7 @@ class PaymentActivity : AppCompatActivity() {
                 cost = basePrice.toDouble(),
                 payment = paymentMethod
             )
+            dbHelper.close()
         }
 
         // Save to SharedPrefs

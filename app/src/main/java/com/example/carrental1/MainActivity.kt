@@ -103,29 +103,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        try {
-            setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
-            val toolbar: androidx.appcompat.widget.Toolbar? = findViewById(R.id.toolbar)
-            toolbar?.let { setSupportActionBar(it) }
+        val toolbar: androidx.appcompat.widget.Toolbar? = findViewById(R.id.toolbar)
+        toolbar?.let { setSupportActionBar(it) }
 
-            autoCompleteCategory = findViewById(R.id.autoCompleteCategory)
-            autoCompleteCar = findViewById(R.id.autoCompleteCar)
-            viewPagerCars = findViewById(R.id.viewPagerCars)
-            tabLayoutCarIndicator = findViewById(R.id.tabLayoutCarIndicator)
+        autoCompleteCategory = findViewById(R.id.autoCompleteCategory)
+        autoCompleteCar = findViewById(R.id.autoCompleteCar)
+        viewPagerCars = findViewById(R.id.viewPagerCars)
+        tabLayoutCarIndicator = findViewById(R.id.tabLayoutCarIndicator)
 
-            databaseHelper = DatabaseHelper(this)
-            databaseHelper?.seedCars(carSeedList)
-            allCarsList = databaseHelper?.getAllCars() ?: emptyList()
+        databaseHelper = DatabaseHelper(this)
+        databaseHelper?.seedCars(carSeedList)
+        allCarsList = databaseHelper?.getAllCars() ?: emptyList()
 
-            setupCategoryDropdown()
-            setupCarPager()
+        setupCategoryDropdown()
+        setupCarPager()
 
-            viewPagerCars?.post {
-                loadCarsByCategory(selectedCategory)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        viewPagerCars?.post {
+            loadCarsByCategory(selectedCategory)
         }
     }
 

@@ -94,10 +94,26 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        // Cars are always re-seeded from code, safe to recreate
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CARS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_BOOKINGS")
-        onCreate(db)
+        db.execSQL(
+            "CREATE TABLE $TABLE_CARS (" +
+            "$CAR_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$CAR_BRAND TEXT, $CAR_MODEL TEXT NOT NULL, $CAR_CODE TEXT, " +
+            "$CAR_CATEGORY TEXT, $CAR_ENGINE TEXT, $CAR_POWER TEXT, $CAR_DRIVETRAIN TEXT, " +
+            "$CAR_SEATS INTEGER, $CAR_DESC TEXT, " +
+            "$CAR_PRICE_DAY REAL, $CAR_PRICE_WEEK REAL, $CAR_PRICE_MONTH REAL, " +
+            "$CAR_IMAGES TEXT, $CAR_AVAILABLE INTEGER DEFAULT 1);"
+        )
+
+        // Version 4 added the phone column — add it without touching existing user data
+        if (oldVersion < 4) {
+            try {
+                db.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN $USER_PHONE TEXT")
+            } catch (_: Exception) {
+                // Column already exists, nothing to do
+            }
+        }
     }
 
     // --- User Methods ---
@@ -218,7 +234,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         if (cursor.moveToFirst()) {
             do {
                 val imagesStr = cursor.getString(cursor.getColumnIndexOrThrow(CAR_IMAGES))
-                val images = imagesStr.split(",")
+                val images = imagesStr?.split(",") ?: emptyList()
                 
                 carList.add(MainActivity.Car(
                     id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)),
