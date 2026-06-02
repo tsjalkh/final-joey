@@ -138,9 +138,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(USER_NAME, name)
         values.put(USER_EMAIL, email)
         values.put(USER_PASSWORD, password)
-        val id = db.insert(TABLE_USERS, null, values)
-        db.close()
-        return id
+        return db.insert(TABLE_USERS, null, values)
     }
 
     fun updatePhone(userId: Int, phone: String) {
@@ -148,7 +146,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val values = ContentValues()
         values.put(USER_PHONE, phone)
         db.update(TABLE_USERS, values, "$USER_ID = ?", arrayOf(userId.toString()))
-        db.close()
     }
 
     fun checkUser(email: String, password: String): UserInfo? {
@@ -171,7 +168,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } else null
         } finally {
             cursor.close()
-            db.close()
         }
     }
 
@@ -190,7 +186,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } else null
         } finally {
             cursor.close()
-            db.close()
         }
     }
 
@@ -207,9 +202,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(BOOKING_DURATION, duration)
         values.put(BOOKING_COST, cost)
         values.put(BOOKING_PAYMENT_METHOD, payment)
-        val id = db.insert(TABLE_BOOKINGS, null, values)
-        db.close()
-        return id
+        return db.insert(TABLE_BOOKINGS, null, values)
     }
 
     fun getLatestBooking(userId: Int): BookingInfo? {
@@ -237,7 +230,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } else null
         } finally {
             cursor.close()
-            db.close()
         }
     }
 
@@ -270,41 +262,36 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             }
         } finally {
             cursor.close()
-            db.close()
         }
         return carList
     }
 
     fun seedCars(cars: List<MainActivity.Car>) {
         val db = this.writableDatabase
-        try {
-            val countCursor = db.rawQuery("SELECT count(*) FROM $TABLE_CARS", null)
-            val count = try {
-                if (countCursor.moveToFirst()) countCursor.getInt(0) else 0
-            } finally {
-                countCursor.close()
-            }
-
-            if (count == 0) {
-                for (car in cars) {
-                    val values = ContentValues()
-                    values.put(CAR_CODE, car.id)
-                    values.put(CAR_MODEL, car.name)
-                    values.put(CAR_CATEGORY, car.category)
-                    values.put(CAR_ENGINE, car.engine)
-                    values.put(CAR_POWER, car.power)
-                    values.put(CAR_DRIVETRAIN, car.drivetrain)
-                    values.put(CAR_SEATS, car.seats)
-                    values.put(CAR_DESC, car.description)
-                    values.put(CAR_PRICE_DAY, car.dailyPrice)
-                    values.put(CAR_PRICE_WEEK, car.weeklyPrice)
-                    values.put(CAR_PRICE_MONTH, car.monthlyPrice)
-                    values.put(CAR_IMAGES, car.images.joinToString(","))
-                    db.insert(TABLE_CARS, null, values)
-                }
-            }
+        val countCursor = db.rawQuery("SELECT count(*) FROM $TABLE_CARS", null)
+        val count = try {
+            if (countCursor.moveToFirst()) countCursor.getInt(0) else 0
         } finally {
-            db.close()
+            countCursor.close()
+        }
+
+        if (count == 0) {
+            for (car in cars) {
+                val values = ContentValues()
+                values.put(CAR_CODE, car.id)
+                values.put(CAR_MODEL, car.name)
+                values.put(CAR_CATEGORY, car.category)
+                values.put(CAR_ENGINE, car.engine)
+                values.put(CAR_POWER, car.power)
+                values.put(CAR_DRIVETRAIN, car.drivetrain)
+                values.put(CAR_SEATS, car.seats)
+                values.put(CAR_DESC, car.description)
+                values.put(CAR_PRICE_DAY, car.dailyPrice)
+                values.put(CAR_PRICE_WEEK, car.weeklyPrice)
+                values.put(CAR_PRICE_MONTH, car.monthlyPrice)
+                values.put(CAR_IMAGES, car.images.joinToString(","))
+                db.insert(TABLE_CARS, null, values)
+            }
         }
     }
 
