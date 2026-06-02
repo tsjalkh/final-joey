@@ -9,7 +9,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "CarRental.db"
-        private const val DATABASE_VERSION = 5
+        private const val DATABASE_VERSION = 6
 
         // Table Names
         const val TABLE_CARS = "cars"
@@ -114,6 +114,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 // Column already exists
             }
         }
+
+        // Ensure bookings table always exists (may be missing from certain upgrade paths)
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS $TABLE_BOOKINGS (" +
+            "$BOOKING_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$BOOKING_USER_ID INTEGER, " +
+            "$BOOKING_CAR_NAME TEXT, " +
+            "$BOOKING_CAR_CODE TEXT, " +
+            "$BOOKING_START TEXT, " +
+            "$BOOKING_END TEXT, " +
+            "$BOOKING_DURATION TEXT, " +
+            "$BOOKING_COST REAL, " +
+            "$BOOKING_PAYMENT_METHOD TEXT);"
+        )
     }
 
     // --- User Methods ---
@@ -263,31 +277,35 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     fun seedCars(cars: List<MainActivity.Car>) {
         val db = this.writableDatabase
-        // Check if already seeded
-        val countCursor = db.rawQuery("SELECT count(*) FROM $TABLE_CARS", null)
-        countCursor.moveToFirst()
-        val count = countCursor.getInt(0)
-        countCursor.close()
-        
-        if (count == 0) {
-            for (car in cars) {
-                val values = ContentValues()
-                values.put(CAR_CODE, car.id)
-                values.put(CAR_MODEL, car.name)
-                values.put(CAR_CATEGORY, car.category)
-                values.put(CAR_ENGINE, car.engine)
-                values.put(CAR_POWER, car.power)
-                values.put(CAR_DRIVETRAIN, car.drivetrain)
-                values.put(CAR_SEATS, car.seats)
-                values.put(CAR_DESC, car.description)
-                values.put(CAR_PRICE_DAY, car.dailyPrice)
-                values.put(CAR_PRICE_WEEK, car.weeklyPrice)
-                values.put(CAR_PRICE_MONTH, car.monthlyPrice)
-                values.put(CAR_IMAGES, car.images.joinToString(","))
-                db.insert(TABLE_CARS, null, values)
+        try {
+            val countCursor = db.rawQuery("SELECT count(*) FROM $TABLE_CARS", null)
+            val count = try {
+                if (countCursor.moveToFirst()) countCursor.getInt(0) else 0
+            } finally {
+                countCursor.close()
             }
+
+            if (count == 0) {
+                for (car in cars) {
+                    val values = ContentValues()
+                    values.put(CAR_CODE, car.id)
+                    values.put(CAR_MODEL, car.name)
+                    values.put(CAR_CATEGORY, car.category)
+                    values.put(CAR_ENGINE, car.engine)
+                    values.put(CAR_POWER, car.power)
+                    values.put(CAR_DRIVETRAIN, car.drivetrain)
+                    values.put(CAR_SEATS, car.seats)
+                    values.put(CAR_DESC, car.description)
+                    values.put(CAR_PRICE_DAY, car.dailyPrice)
+                    values.put(CAR_PRICE_WEEK, car.weeklyPrice)
+                    values.put(CAR_PRICE_MONTH, car.monthlyPrice)
+                    values.put(CAR_IMAGES, car.images.joinToString(","))
+                    db.insert(TABLE_CARS, null, values)
+                }
+            }
+        } finally {
+            db.close()
         }
-        db.close()
     }
 
     data class UserInfo(val id: Int, val name: String, val email: String, val phone: String)
