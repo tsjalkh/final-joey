@@ -114,8 +114,14 @@ class MainActivity : AppCompatActivity() {
         tabLayoutCarIndicator = findViewById(R.id.tabLayoutCarIndicator)
 
         databaseHelper = DatabaseHelper(this)
-        databaseHelper?.seedCars(carSeedList)
-        allCarsList = databaseHelper?.getAllCars() ?: emptyList()
+        try {
+            databaseHelper?.seedCars(carSeedList)
+            allCarsList = databaseHelper?.getAllCars() ?: emptyList()
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "DB load error", e)
+            allCarsList = emptyList()
+            Toast.makeText(this, "Error loading car data. Please try restarting the app.", Toast.LENGTH_LONG).show()
+        }
 
         setupCategoryDropdown()
         setupCarPager()
