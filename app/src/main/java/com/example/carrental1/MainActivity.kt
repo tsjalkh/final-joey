@@ -211,6 +211,12 @@ class MainActivity : AppCompatActivity() {
             R.id.menuSports -> { loadCarsByCategory("Sports Cars"); return true }
             R.id.menuProfile -> { startActivity(Intent(this, ProfileActivity::class.java)); return true }
             R.id.menuSupport -> { Toast.makeText(this, "Support: Call +961 70 000 000", Toast.LENGTH_LONG).show(); return true }
+            R.id.menuLogout -> {
+                getSharedPreferences("UserData", MODE_PRIVATE).edit { clear() }
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
