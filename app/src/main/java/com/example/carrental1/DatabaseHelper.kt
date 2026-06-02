@@ -9,7 +9,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "CarRental.db"
-        private const val DATABASE_VERSION = 5
+        private const val DATABASE_VERSION = 6
 
         // Table Names
         const val TABLE_CARS = "cars"
@@ -114,6 +114,20 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 // Column already exists
             }
         }
+
+        // Ensure bookings table always exists (may be missing from certain upgrade paths)
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS $TABLE_BOOKINGS (" +
+            "$BOOKING_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$BOOKING_USER_ID INTEGER, " +
+            "$BOOKING_CAR_NAME TEXT, " +
+            "$BOOKING_CAR_CODE TEXT, " +
+            "$BOOKING_START TEXT, " +
+            "$BOOKING_END TEXT, " +
+            "$BOOKING_DURATION TEXT, " +
+            "$BOOKING_COST REAL, " +
+            "$BOOKING_PAYMENT_METHOD TEXT);"
+        )
     }
 
     // --- User Methods ---
@@ -124,9 +138,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(USER_NAME, name)
         values.put(USER_EMAIL, email)
         values.put(USER_PASSWORD, password)
-        val id = db.insert(TABLE_USERS, null, values)
-        db.close()
-        return id
+        return db.insert(TABLE_USERS, null, values)
     }
 
     fun updatePhone(userId: Int, phone: String) {
@@ -134,7 +146,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val values = ContentValues()
         values.put(USER_PHONE, phone)
         db.update(TABLE_USERS, values, "$USER_ID = ?", arrayOf(userId.toString()))
-        db.close()
     }
 
     fun checkUser(email: String, password: String): UserInfo? {
@@ -157,7 +168,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } else null
         } finally {
             cursor.close()
-            db.close()
         }
     }
 
@@ -176,7 +186,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } else null
         } finally {
             cursor.close()
-            db.close()
         }
     }
 
@@ -193,9 +202,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         values.put(BOOKING_DURATION, duration)
         values.put(BOOKING_COST, cost)
         values.put(BOOKING_PAYMENT_METHOD, payment)
-        val id = db.insert(TABLE_BOOKINGS, null, values)
-        db.close()
-        return id
+        return db.insert(TABLE_BOOKINGS, null, values)
     }
 
     fun getLatestBooking(userId: Int): BookingInfo? {
@@ -223,7 +230,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             } else null
         } finally {
             cursor.close()
-            db.close()
         }
     }
 
@@ -256,19 +262,19 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             }
         } finally {
             cursor.close()
-            db.close()
         }
         return carList
     }
 
     fun seedCars(cars: List<MainActivity.Car>) {
         val db = this.writableDatabase
-        // Check if already seeded
         val countCursor = db.rawQuery("SELECT count(*) FROM $TABLE_CARS", null)
-        countCursor.moveToFirst()
-        val count = countCursor.getInt(0)
-        countCursor.close()
-        
+        val count = try {
+            if (countCursor.moveToFirst()) countCursor.getInt(0) else 0
+        } finally {
+            countCursor.close()
+        }
+
         if (count == 0) {
             for (car in cars) {
                 val values = ContentValues()
@@ -287,7 +293,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 db.insert(TABLE_CARS, null, values)
             }
         }
-        db.close()
     }
 
     data class UserInfo(val id: Int, val name: String, val email: String, val phone: String)
