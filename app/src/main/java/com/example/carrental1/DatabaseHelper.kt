@@ -9,7 +9,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "CarRental.db"
-        private const val DATABASE_VERSION = 4 // Updated version for phone number and car seeding
+        private const val DATABASE_VERSION = 5
 
         // Table Names
         const val TABLE_CARS = "cars"
@@ -106,12 +106,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             "$CAR_IMAGES TEXT, $CAR_AVAILABLE INTEGER DEFAULT 1);"
         )
 
-        // Version 4 added the phone column — add it without touching existing user data
-        if (oldVersion < 4) {
+        // Ensure phone column exists for any version < 5 (safe to re-run, caught if already present)
+        if (oldVersion < 5) {
             try {
                 db.execSQL("ALTER TABLE $TABLE_USERS ADD COLUMN $USER_PHONE TEXT")
             } catch (_: Exception) {
-                // Column already exists, nothing to do
+                // Column already exists
             }
         }
     }
@@ -149,11 +149,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
         var userInfo: UserInfo? = null
         if (cursor.moveToFirst()) {
+            val phoneIdx = cursor.getColumnIndex(USER_PHONE)
             userInfo = UserInfo(
                 id = cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
                 name = cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
                 email = cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL)),
-                phone = cursor.getString(cursor.getColumnIndexOrThrow(USER_PHONE)) ?: "N/A"
+                phone = if (phoneIdx >= 0) cursor.getString(phoneIdx) ?: "N/A" else "N/A"
             )
         }
         cursor.close()
@@ -166,11 +167,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val cursor = db.query(TABLE_USERS, null, "$USER_ID = ?", arrayOf(userId.toString()), null, null, null)
         var userInfo: UserInfo? = null
         if (cursor.moveToFirst()) {
+            val phoneIdx = cursor.getColumnIndex(USER_PHONE)
             userInfo = UserInfo(
                 id = cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
                 name = cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
                 email = cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL)),
-                phone = cursor.getString(cursor.getColumnIndexOrThrow(USER_PHONE)) ?: "N/A"
+                phone = if (phoneIdx >= 0) cursor.getString(phoneIdx) ?: "N/A" else "N/A"
             )
         }
         cursor.close()

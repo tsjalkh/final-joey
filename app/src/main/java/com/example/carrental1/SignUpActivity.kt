@@ -11,6 +11,15 @@ import com.google.android.material.textfield.TextInputEditText
 class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Skip sign-up screen if user is already logged in
+        val userId = getSharedPreferences("UserData", MODE_PRIVATE).getInt("userId", -1)
+        if (userId != -1) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_sign_up)
 
         val nameEditText: TextInputEditText = findViewById(R.id.nameEditText)
