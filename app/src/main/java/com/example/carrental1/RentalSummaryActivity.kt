@@ -1,9 +1,11 @@
 package com.example.carrental1
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.button.MaterialButton
 
 class RentalSummaryActivity : AppCompatActivity() {
 
@@ -35,5 +37,14 @@ class RentalSummaryActivity : AppCompatActivity() {
         )
 
         Toast.makeText(this, "Booking #$bookingId Confirmed", Toast.LENGTH_LONG).show()
+
+        val buttonBackHome = findViewById<MaterialButton>(R.id.buttonBackHome)
+        buttonBackHome.visibility = android.view.View.VISIBLE
+        buttonBackHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
     }
 }

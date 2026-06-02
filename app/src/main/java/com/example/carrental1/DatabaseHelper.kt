@@ -140,44 +140,44 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun checkUser(email: String, password: String): UserInfo? {
         val db = this.readableDatabase
         val cursor = db.query(
-            TABLE_USERS,
-            null,
+            TABLE_USERS, null,
             "$USER_EMAIL = ? AND $USER_PASSWORD = ?",
             arrayOf(email, password),
             null, null, null
         )
-
-        var userInfo: UserInfo? = null
-        if (cursor.moveToFirst()) {
-            val phoneIdx = cursor.getColumnIndex(USER_PHONE)
-            userInfo = UserInfo(
-                id = cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
-                name = cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
-                email = cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL)),
-                phone = if (phoneIdx >= 0) cursor.getString(phoneIdx) ?: "N/A" else "N/A"
-            )
+        return try {
+            if (cursor.moveToFirst()) {
+                val phoneIdx = cursor.getColumnIndex(USER_PHONE)
+                UserInfo(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
+                    email = cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL)),
+                    phone = if (phoneIdx >= 0) cursor.getString(phoneIdx) ?: "N/A" else "N/A"
+                )
+            } else null
+        } finally {
+            cursor.close()
+            db.close()
         }
-        cursor.close()
-        db.close()
-        return userInfo
     }
 
     fun getUserById(userId: Int): UserInfo? {
         val db = this.readableDatabase
         val cursor = db.query(TABLE_USERS, null, "$USER_ID = ?", arrayOf(userId.toString()), null, null, null)
-        var userInfo: UserInfo? = null
-        if (cursor.moveToFirst()) {
-            val phoneIdx = cursor.getColumnIndex(USER_PHONE)
-            userInfo = UserInfo(
-                id = cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
-                name = cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
-                email = cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL)),
-                phone = if (phoneIdx >= 0) cursor.getString(phoneIdx) ?: "N/A" else "N/A"
-            )
+        return try {
+            if (cursor.moveToFirst()) {
+                val phoneIdx = cursor.getColumnIndex(USER_PHONE)
+                UserInfo(
+                    id = cursor.getInt(cursor.getColumnIndexOrThrow(USER_ID)),
+                    name = cursor.getString(cursor.getColumnIndexOrThrow(USER_NAME)),
+                    email = cursor.getString(cursor.getColumnIndexOrThrow(USER_EMAIL)),
+                    phone = if (phoneIdx >= 0) cursor.getString(phoneIdx) ?: "N/A" else "N/A"
+                )
+            } else null
+        } finally {
+            cursor.close()
+            db.close()
         }
-        cursor.close()
-        db.close()
-        return userInfo
     }
 
     // --- Booking Methods ---
@@ -208,54 +208,56 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             null, null, "$BOOKING_ID DESC", "1"
         )
 
-        var booking: BookingInfo? = null
-        if (cursor.moveToFirst()) {
-            booking = BookingInfo(
-                id = cursor.getLong(cursor.getColumnIndexOrThrow(BOOKING_ID)),
-                carName = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_NAME)) ?: "",
-                carCode = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_CODE)) ?: "",
-                start = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_START)) ?: "",
-                end = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_END)) ?: "",
-                duration = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_DURATION)) ?: "",
-                cost = cursor.getDouble(cursor.getColumnIndexOrThrow(BOOKING_COST)),
-                paymentMethod = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_PAYMENT_METHOD)) ?: ""
-            )
+        return try {
+            if (cursor.moveToFirst()) {
+                BookingInfo(
+                    id = cursor.getLong(cursor.getColumnIndexOrThrow(BOOKING_ID)),
+                    carName = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_NAME)) ?: "",
+                    carCode = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_CAR_CODE)) ?: "",
+                    start = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_START)) ?: "",
+                    end = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_END)) ?: "",
+                    duration = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_DURATION)) ?: "",
+                    cost = cursor.getDouble(cursor.getColumnIndexOrThrow(BOOKING_COST)),
+                    paymentMethod = cursor.getString(cursor.getColumnIndexOrThrow(BOOKING_PAYMENT_METHOD)) ?: ""
+                )
+            } else null
+        } finally {
+            cursor.close()
+            db.close()
         }
-        cursor.close()
-        db.close()
-        return booking
     }
 
     // --- Car Methods ---
 
     fun getAllCars(): List<MainActivity.Car> {
         val db = this.readableDatabase
-        val carList = mutableListOf<MainActivity.Car>()
         val cursor = db.rawQuery("SELECT * FROM $TABLE_CARS", null)
-        
-        if (cursor.moveToFirst()) {
-            do {
-                val imagesStr = cursor.getString(cursor.getColumnIndexOrThrow(CAR_IMAGES))
-                val images = imagesStr?.split(",") ?: emptyList()
-                
-                carList.add(MainActivity.Car(
-                    id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)) ?: "",
-                    name = cursor.getString(cursor.getColumnIndexOrThrow(CAR_MODEL)) ?: "",
-                    category = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CATEGORY)) ?: "",
-                    engine = cursor.getString(cursor.getColumnIndexOrThrow(CAR_ENGINE)) ?: "",
-                    power = cursor.getString(cursor.getColumnIndexOrThrow(CAR_POWER)) ?: "",
-                    drivetrain = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DRIVETRAIN)) ?: "",
-                    seats = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_SEATS)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DESC)) ?: "",
-                    dailyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_DAY)),
-                    weeklyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_WEEK)),
-                    monthlyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_MONTH)),
-                    images = images
-                ))
-            } while (cursor.moveToNext())
+        val carList = mutableListOf<MainActivity.Car>()
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    val imagesStr = cursor.getString(cursor.getColumnIndexOrThrow(CAR_IMAGES))
+                    val images = imagesStr?.split(",") ?: emptyList()
+                    carList.add(MainActivity.Car(
+                        id = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CODE)) ?: "",
+                        name = cursor.getString(cursor.getColumnIndexOrThrow(CAR_MODEL)) ?: "",
+                        category = cursor.getString(cursor.getColumnIndexOrThrow(CAR_CATEGORY)) ?: "",
+                        engine = cursor.getString(cursor.getColumnIndexOrThrow(CAR_ENGINE)) ?: "",
+                        power = cursor.getString(cursor.getColumnIndexOrThrow(CAR_POWER)) ?: "",
+                        drivetrain = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DRIVETRAIN)) ?: "",
+                        seats = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_SEATS)),
+                        description = cursor.getString(cursor.getColumnIndexOrThrow(CAR_DESC)) ?: "",
+                        dailyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_DAY)),
+                        weeklyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_WEEK)),
+                        monthlyPrice = cursor.getInt(cursor.getColumnIndexOrThrow(CAR_PRICE_MONTH)),
+                        images = images
+                    ))
+                } while (cursor.moveToNext())
+            }
+        } finally {
+            cursor.close()
+            db.close()
         }
-        cursor.close()
-        db.close()
         return carList
     }
 

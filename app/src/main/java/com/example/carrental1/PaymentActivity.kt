@@ -143,7 +143,7 @@ class PaymentActivity : AppCompatActivity() {
     private fun updateDateDisplay() {
         val startStr = dateFormat.format(startDate.time)
         val endStr = dateFormat.format(endDate.time)
-        textSelectedDates.text = getString(R.string.category_format, "$startStr TO $endStr")
+        textSelectedDates.text = "$startStr  →  $endStr"
     }
 
     private fun setupPaymentLogic() {
@@ -174,7 +174,7 @@ class PaymentActivity : AppCompatActivity() {
             return
         }
 
-        if (textSelectedDates.text == getString(R.string.no_date_selected)) {
+        if (textSelectedDates.text.toString() == getString(R.string.no_date_selected)) {
             Toast.makeText(this, "Please select rental dates", Toast.LENGTH_SHORT).show()
             return
         }
