@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -27,9 +27,12 @@ class CarPagerAdapter(
         val textCarName: TextView = view.findViewById(R.id.textCarName)
         val textCarInfo: TextView = view.findViewById(R.id.textCarInfo)
         val textPriceTag: TextView = view.findViewById(R.id.textPriceTag)
-        val btnRentDay: MaterialButton = view.findViewById(R.id.btnRentDay)
-        val btnRentWeek: MaterialButton = view.findViewById(R.id.btnRentWeek)
-        val btnRentMonth: MaterialButton = view.findViewById(R.id.btnRentMonth)
+        val btnRentDay: MaterialCardView = view.findViewById(R.id.btnRentDay)
+        val btnRentWeek: MaterialCardView = view.findViewById(R.id.btnRentWeek)
+        val btnRentMonth: MaterialCardView = view.findViewById(R.id.btnRentMonth)
+        val textPriceDay: TextView = view.findViewById(R.id.textPriceDay)
+        val textPriceWeek: TextView = view.findViewById(R.id.textPriceWeek)
+        val textPriceMonth: TextView = view.findViewById(R.id.textPriceMonth)
         var mediator: TabLayoutMediator? = null
     }
 
@@ -53,9 +56,9 @@ class CarPagerAdapter(
             append(car.description)
         }
 
-        holder.btnRentDay.text = "Daily\n\$${car.dailyPrice}"
-        holder.btnRentWeek.text = "Weekly\n\$${car.weeklyPrice}"
-        holder.btnRentMonth.text = "Monthly\n\$${car.monthlyPrice}"
+        holder.textPriceDay.text = "\$${car.dailyPrice}"
+        holder.textPriceWeek.text = "\$${car.weeklyPrice}"
+        holder.textPriceMonth.text = "\$${car.monthlyPrice}"
 
         holder.mediator?.detach()
         holder.mediator = null
