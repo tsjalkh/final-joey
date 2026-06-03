@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -43,7 +43,19 @@ class SignUpActivity : AppCompatActivity() {
                     val result = dbHelper.addUser(name, email, password)
 
                     if (result != -1L) {
-                        showSuccessDialog()
+                        val user = dbHelper.checkUser(email, password)
+                        if (user != null) {
+                            getSharedPreferences("UserData", MODE_PRIVATE).edit {
+                                putInt("userId", user.id)
+                                putString("userName", user.name)
+                                putString("userEmail", user.email)
+                            }
+                        }
+                        Toast.makeText(this, "Welcome to CedarDrive, $name!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                        @Suppress("DEPRECATION")
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                        finish()
                     } else {
                         Toast.makeText(this, "Registration failed. Email might already exist.", Toast.LENGTH_SHORT).show()
                     }
@@ -73,20 +85,6 @@ class SignUpActivity : AppCompatActivity() {
     private fun isValidPassword(password: String): Boolean {
         val passwordPattern = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!]).*$"
         return password.matches(Regex(passwordPattern))
-    }
-
-    private fun showSuccessDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Account Created")
-            .setMessage("Your account has been created successfully! You can now log in.")
-            .setPositiveButton("OK") { _, _ ->
-                startActivity(Intent(this, LoginActivity::class.java))
-                @Suppress("DEPRECATION")
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                finish()
-            }
-            .setCancelable(false)
-            .show()
     }
 
     @Deprecated("Deprecated in Java")

@@ -26,6 +26,7 @@ class CarPagerAdapter(
         val tabLayoutIndicator: TabLayout = view.findViewById(R.id.tabLayoutIndicator)
         val textCarName: TextView = view.findViewById(R.id.textCarName)
         val textCarInfo: TextView = view.findViewById(R.id.textCarInfo)
+        val textPriceTag: TextView = view.findViewById(R.id.textPriceTag)
         val btnRentDay: MaterialButton = view.findViewById(R.id.btnRentDay)
         val btnRentWeek: MaterialButton = view.findViewById(R.id.btnRentWeek)
         val btnRentMonth: MaterialButton = view.findViewById(R.id.btnRentMonth)
@@ -45,18 +46,17 @@ class CarPagerAdapter(
         val car = cars[position]
 
         holder.textCarName.text = car.name
+        holder.textPriceTag.text = "FROM \$${car.dailyPrice}/DAY"
         holder.textCarInfo.text = buildString {
             append("${car.engine}  •  ${car.power}\n")
             append("${car.drivetrain}  •  ${car.seats} seats\n\n")
             append(car.description)
         }
 
-        // Show price prominently on each button
-        holder.btnRentDay.text = "1 Day  —  \$${car.dailyPrice}"
-        holder.btnRentWeek.text = "1 Week  —  \$${car.weeklyPrice}"
-        holder.btnRentMonth.text = "1 Month  —  \$${car.monthlyPrice}"
+        holder.btnRentDay.text = "Daily\n\$${car.dailyPrice}"
+        holder.btnRentWeek.text = "Weekly\n\$${car.weeklyPrice}"
+        holder.btnRentMonth.text = "Monthly\n\$${car.monthlyPrice}"
 
-        // Detach stale inner mediator before swapping the image adapter
         holder.mediator?.detach()
         holder.mediator = null
 

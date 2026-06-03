@@ -14,6 +14,15 @@ import com.google.android.material.textfield.TextInputEditText
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (getSharedPreferences("UserData", MODE_PRIVATE).getInt("userId", -1) != -1) {
+            startActivity(Intent(this, MainActivity::class.java))
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         val emailEditText: TextInputEditText = findViewById(R.id.emailAutoComplete)
