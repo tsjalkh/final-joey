@@ -3,81 +3,135 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/surface_white">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPagerCarImages"
+    <!-- Car Image Carousel -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp" />
+        android:layout_height="240dp">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayoutIndicator"
-        android:layout_width="match_parent"
-        android:layout_height="12dp"
-        android:layout_gravity="bottom"
-        android:background="@android:color/transparent"
-        app:tabBackground="@drawable/dot_selector"
-        app:tabIndicatorHeight="0dp"
-        app:tabMaxWidth="12dp"
-        app:tabRippleColor="@android:color/transparent" />
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerCarImages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
+        <!-- Gradient overlay at bottom of image -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/gradient_car_overlay" />
+
+        <!-- Dot Indicators overlaid on image -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            app:tabBackground="@drawable/dot_selector"
+            app:tabIndicatorHeight="0dp"
+            app:tabMaxWidth="12dp"
+            app:tabRippleColor="@android:color/transparent" />
+    </FrameLayout>
+
+    <!-- Car Details Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingLeft="20dp"
+        android:paddingTop="16dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="8dp">
 
+        <!-- Car Name -->
         <TextView
             android:id="@+id/textCarName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:textColor="?attr/colorPrimary" />
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textColor="@color/brand_navy"
+            android:textStyle="bold" />
 
+        <!-- Specs Section -->
         <TextView
             android:id="@+id/textCarInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:lineSpacingExtra="4dp" />
+            android:textColor="@color/text_secondary"
+            android:lineSpacingExtra="3dp" />
 
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:background="@color/divider_color" />
+
+        <!-- Rental Duration Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/rental_duration"
-            android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+            android:layout_marginBottom="12dp"
+            android:text="Select Rental Duration"
+            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+            android:textColor="@color/brand_navy"
+            android:textStyle="bold" />
 
+        <!-- Package Buttons (vertical, card-like style) -->
         <LinearLayout
             android:id="@+id/layoutPackages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:orientation="vertical">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRentDay"
-                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/rent_1_day" />
+                android:layout_height="52dp"
+                android:text="@string/rent_1_day"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:backgroundTint="@color/brand_blue_mid"
+                app:icon="@android:drawable/ic_menu_my_calendar"
+                app:iconGravity="start"
+                app:iconPadding="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRentWeek"
-                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/rent_1_week" />
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/rent_1_week"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:backgroundTint="@color/brand_navy"
+                app:icon="@android:drawable/ic_menu_my_calendar"
+                app:iconGravity="start"
+                app:iconPadding="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRentMonth"
-                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/rent_1_month" />
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/rent_1_month"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:backgroundTint="@color/brand_gold"
+                app:icon="@android:drawable/ic_menu_my_calendar"
+                app:iconGravity="start"
+                app:iconPadding="8dp" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

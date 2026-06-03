@@ -4,21 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/background_light"
     tools:targetApi="35">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@drawable/gradient_toolbar"
+        app:elevation="8dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/app_name"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            app:titleTextColor="#FFFFFF"
+            app:subtitleTextColor="#AACCFF" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -31,28 +33,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingBottom="16dp">
 
-            <!-- Category Selection Card -->
+            <!-- Search / Filter Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Find Your Ride"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textColor="@color/brand_navy"
+                        android:textStyle="bold" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/select_category_hint">
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/select_category_hint"
+                        app:startIconDrawable="@android:drawable/ic_menu_gallery"
+                        app:startIconTint="@color/brand_blue_mid">
 
                         <AutoCompleteTextView
                             android:id="@+id/autoCompleteCategory"
@@ -60,7 +75,6 @@
                             android:layout_height="wrap_content"
                             android:inputType="none"
                             android:labelFor="@id/autoCompleteCategory" />
-
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -68,7 +82,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="@string/select_specific_car_hint">
+                        android:hint="@string/select_specific_car_hint"
+                        app:startIconDrawable="@android:drawable/ic_menu_directions"
+                        app:startIconTint="@color/brand_blue_mid">
 
                         <AutoCompleteTextView
                             android:id="@+id/autoCompleteCar"
@@ -76,18 +92,31 @@
                             android:layout_height="wrap_content"
                             android:inputType="none"
                             android:labelFor="@id/autoCompleteCar" />
-
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Car ViewPager Section Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp"
+                android:text="Available Vehicles"
+                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/brand_navy"
+                android:textStyle="bold" />
 
             <!-- Car ViewPager Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="6dp"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
@@ -98,13 +127,12 @@
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/viewPagerCars"
                         android:layout_width="match_parent"
-                        android:layout_height="580dp" />
+                        android:layout_height="620dp" />
 
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tabLayoutCarIndicator"
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
-                        android:layout_gravity="bottom"
                         android:background="@android:color/transparent"
                         app:tabBackground="@drawable/dot_selector"
                         app:tabIndicatorHeight="0dp"

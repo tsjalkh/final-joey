@@ -3,6 +3,7 @@ package com.example.carrental1
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
@@ -42,9 +43,26 @@ class ProfileActivity : AppCompatActivity() {
 
         loadUserData()
         loadRentalHistory()
+        animateCardsIn()
 
         buttonChangePhoto.setOnClickListener {
             pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+    }
+
+    private fun animateCardsIn() {
+        val cards = listOf<View>(
+            findViewById(R.id.cardRentalHistory)
+        )
+        cards.forEachIndexed { index, view ->
+            view.alpha = 0f
+            view.translationY = 60f
+            view.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(450)
+                .setStartDelay(200L + index * 100L)
+                .start()
         }
     }
 
@@ -93,7 +111,19 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) { finish(); return true }
+        if (item.itemId == android.R.id.home) {
+            finish()
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            return true
+        }
         return super.onOptionsItemSelected(item)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 }

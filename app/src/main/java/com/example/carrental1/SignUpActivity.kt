@@ -2,6 +2,7 @@ package com.example.carrental1
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +13,11 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Skip sign-up screen if user is already logged in
         val userId = getSharedPreferences("UserData", MODE_PRIVATE).getInt("userId", -1)
         if (userId != -1) {
             startActivity(Intent(this, MainActivity::class.java))
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
             finish()
             return
         }
@@ -27,6 +29,8 @@ class SignUpActivity : AppCompatActivity() {
         val passwordEditText: TextInputEditText = findViewById(R.id.passwordEditText)
         val signUpButton: MaterialButton = findViewById(R.id.signUpButton)
         val loginLinkButton: MaterialButton = findViewById(R.id.loginLinkButton)
+
+        animateHeaderIn()
 
         signUpButton.setOnClickListener {
             val name = nameEditText.text.toString().trim()
@@ -53,8 +57,17 @@ class SignUpActivity : AppCompatActivity() {
 
         loginLinkButton.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()
         }
+    }
+
+    private fun animateHeaderIn() {
+        val header = findViewById<View>(R.id.signUpHeader)
+        header.alpha = 0f
+        header.translationY = -40f
+        header.animate().alpha(1f).translationY(0f).setDuration(500).setStartDelay(100).start()
     }
 
     private fun isValidPassword(password: String): Boolean {
@@ -68,9 +81,18 @@ class SignUpActivity : AppCompatActivity() {
             .setMessage("Your account has been created successfully! You can now log in.")
             .setPositiveButton("OK") { _, _ ->
                 startActivity(Intent(this, LoginActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                 finish()
             }
             .setCancelable(false)
             .show()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 }

@@ -74,8 +74,16 @@ class PaymentActivity : AppCompatActivity() {
 
         setupDatePickers()
         setupPaymentToggle()
+        animateContentIn()
 
         buttonConfirm.setOnClickListener { confirmRental() }
+    }
+
+    private fun animateContentIn() {
+        val scrollView = findViewById<View>(android.R.id.content)
+        scrollView.alpha = 0f
+        scrollView.translationY = 30f
+        scrollView.animate().alpha(1f).translationY(0f).setDuration(400).setStartDelay(100).start()
     }
 
     private fun setupDatePickers() {
@@ -237,11 +245,18 @@ class PaymentActivity : AppCompatActivity() {
             putExtra("fullName", userPrefs.getString("userName", ""))
             putExtra("email", userPrefs.getString("userEmail", ""))
         })
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         finish()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) { finish(); return true }
+        if (item.itemId == android.R.id.home) {
+            finish()
+            @Suppress("DEPRECATION")
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_down_out)
+            return true
+        }
         return super.onOptionsItemSelected(item)
     }
 }

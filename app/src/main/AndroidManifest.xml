@@ -37,6 +37,7 @@
             android:label="Car List"
             android:theme="@style/Theme.CarRental1.NoActionBar" />
 
+
         <activity
             android:name=".RentalSummaryActivity"
             android:exported="false"

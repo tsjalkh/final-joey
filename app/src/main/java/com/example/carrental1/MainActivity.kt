@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity() {
         setupCategoryDropdown()
         setupCarPager()
 
-        // Defer first load until ViewPager2 is laid out
         viewPagerCars.post {
             loadCarsByCategory(selectedCategory)
         }
@@ -147,7 +146,6 @@ class MainActivity : AppCompatActivity() {
         }
         viewPagerCars.adapter = carPagerAdapter
 
-        // Page-change keeps the car dropdown in sync
         viewPagerCars.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val filtered = allCarsList.filter { it.category == selectedCategory }
@@ -157,7 +155,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // Car dropdown navigates the pager — register once here, not inside loadCarsByCategory
         autoCompleteCar.setOnItemClickListener { _, _, position, _ ->
             viewPagerCars.setCurrentItem(position, true)
         }
@@ -167,30 +164,21 @@ class MainActivity : AppCompatActivity() {
         selectedCategory = category
         val filtered = allCarsList.filter { it.category == category }
 
-        // Update car name dropdown list
         autoCompleteCar.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filtered.map { it.name })
         )
 
-        // CRITICAL ORDER:
-        // 1. Detach outer mediator BEFORE notifyDataSetChanged fires inside updateCars.
-        //    Calling notifyDataSetChanged while the mediator is still observing causes
-        //    IllegalStateException / index-out-of-bounds crashes.
         mainMediator?.detach()
         mainMediator = null
 
-        // 2. Update adapter data (triggers notifyDataSetChanged – safe now)
         carPagerAdapter.updateCars(filtered)
 
-        // 3. Reset pager to first item
         viewPagerCars.setCurrentItem(0, false)
 
-        // 4. Update dropdown text to match first car
         if (filtered.isNotEmpty()) {
             autoCompleteCar.setText(filtered[0].name, false)
         }
 
-        // 5. Re-attach mediator after data is settled
         if (filtered.isNotEmpty()) {
             mainMediator = TabLayoutMediator(tabLayoutCarIndicator, viewPagerCars) { _, _ -> }
             mainMediator!!.attach()
@@ -205,6 +193,8 @@ class MainActivity : AppCompatActivity() {
             putExtra("price", price)
             putExtra("dailyPrice", car.dailyPrice)
         })
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -217,13 +207,20 @@ class MainActivity : AppCompatActivity() {
             R.id.menuSedans -> { loadCarsByCategory("Sedans"); true }
             R.id.menuSUVs -> { loadCarsByCategory("SUVs"); true }
             R.id.menuSports -> { loadCarsByCategory("Sports Cars"); true }
-            R.id.menuProfile -> { startActivity(Intent(this, ProfileActivity::class.java)); true }
+            R.id.menuProfile -> {
+                startActivity(Intent(this, ProfileActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                true
+            }
             R.id.menuSupport -> {
                 Toast.makeText(this, "Support: Call +961 70 000 000", Toast.LENGTH_LONG).show(); true
             }
             R.id.menuLogout -> {
                 getSharedPreferences("UserData", MODE_PRIVATE).edit { clear() }
                 startActivity(Intent(this, LoginActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
                 finish()
                 true
             }

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
     <style name="Theme.CarRental1" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorSecondary">@color/purple_200</item>
-        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="colorPrimary">@color/brand_blue_mid</item>
+        <item name="colorSecondary">@color/brand_gold</item>
+        <item name="colorTertiary">@color/brand_navy</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="android:statusBarColor">@color/brand_navy</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorOnPrimary">@color/surface_white</item>
+        <item name="android:navigationBarColor">@color/surface_white</item>
     </style>
 
     <style name="Theme.CarRental1.NoActionBar" parent="Theme.CarRental1">

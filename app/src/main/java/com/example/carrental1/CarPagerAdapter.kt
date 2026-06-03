@@ -45,13 +45,16 @@ class CarPagerAdapter(
         val car = cars[position]
 
         holder.textCarName.text = car.name
-        holder.textCarInfo.text = context.getString(
-            R.string.car_details_format,
-            car.name, car.engine, car.power,
-            car.drivetrain, car.seats,
-            car.dailyPrice, car.weeklyPrice, car.monthlyPrice,
-            car.description
-        )
+        holder.textCarInfo.text = buildString {
+            append("${car.engine}  •  ${car.power}\n")
+            append("${car.drivetrain}  •  ${car.seats} seats\n\n")
+            append(car.description)
+        }
+
+        // Show price prominently on each button
+        holder.btnRentDay.text = "1 Day  —  \$${car.dailyPrice}"
+        holder.btnRentWeek.text = "1 Week  —  \$${car.weeklyPrice}"
+        holder.btnRentMonth.text = "1 Month  —  \$${car.monthlyPrice}"
 
         // Detach stale inner mediator before swapping the image adapter
         holder.mediator?.detach()
