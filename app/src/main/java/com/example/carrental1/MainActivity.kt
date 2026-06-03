@@ -7,19 +7,16 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var autoCompleteCategory: AutoCompleteTextView
     private lateinit var autoCompleteCar: AutoCompleteTextView
-    private lateinit var viewPagerCars: ViewPager2
-    private lateinit var tabLayoutCarIndicator: TabLayout
+    private lateinit var recyclerViewCars: RecyclerView
 
     private lateinit var carPagerAdapter: CarPagerAdapter
-    private var mainMediator: TabLayoutMediator? = null
     private lateinit var databaseHelper: DatabaseHelper
 
     private var selectedCategory = "Sedans"
@@ -108,8 +105,7 @@ class MainActivity : AppCompatActivity() {
 
         autoCompleteCategory = findViewById(R.id.autoCompleteCategory)
         autoCompleteCar = findViewById(R.id.autoCompleteCar)
-        viewPagerCars = findViewById(R.id.viewPagerCars)
-        tabLayoutCarIndicator = findViewById(R.id.tabLayoutCarIndicator)
+        recyclerViewCars = findViewById(R.id.recyclerViewCars)
 
         databaseHelper = DatabaseHelper.getInstance(this)
         allCarsList = try {
@@ -121,12 +117,20 @@ class MainActivity : AppCompatActivity() {
             emptyList()
         }
 
+        setupCarList()
         setupCategoryDropdown()
-        setupCarPager()
 
-        viewPagerCars.post {
+        recyclerViewCars.post {
             loadCarsByCategory(selectedCategory)
         }
+    }
+
+    private fun setupCarList() {
+        carPagerAdapter = CarPagerAdapter(this, emptyList()) { car, duration, price, _ ->
+            openPaymentPage(car, duration, price)
+        }
+        recyclerViewCars.layoutManager = LinearLayoutManager(this)
+        recyclerViewCars.adapter = carPagerAdapter
     }
 
     private fun setupCategoryDropdown() {
@@ -140,26 +144,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupCarPager() {
-        carPagerAdapter = CarPagerAdapter(this, emptyList()) { car, duration, price, _ ->
-            openPaymentPage(car, duration, price)
-        }
-        viewPagerCars.adapter = carPagerAdapter
-
-        viewPagerCars.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                val filtered = allCarsList.filter { it.category == selectedCategory }
-                if (position in filtered.indices) {
-                    autoCompleteCar.setText(filtered[position].name, false)
-                }
-            }
-        })
-
-        autoCompleteCar.setOnItemClickListener { _, _, position, _ ->
-            viewPagerCars.setCurrentItem(position, true)
-        }
-    }
-
     private fun loadCarsByCategory(category: String) {
         selectedCategory = category
         val filtered = allCarsList.filter { it.category == category }
@@ -167,22 +151,16 @@ class MainActivity : AppCompatActivity() {
         autoCompleteCar.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filtered.map { it.name })
         )
-
-        mainMediator?.detach()
-        mainMediator = null
-
-        carPagerAdapter.updateCars(filtered)
-
-        viewPagerCars.setCurrentItem(0, false)
-
         if (filtered.isNotEmpty()) {
             autoCompleteCar.setText(filtered[0].name, false)
         }
 
-        if (filtered.isNotEmpty()) {
-            mainMediator = TabLayoutMediator(tabLayoutCarIndicator, viewPagerCars) { _, _ -> }
-            mainMediator!!.attach()
+        autoCompleteCar.setOnItemClickListener { _, _, position, _ ->
+            recyclerViewCars.smoothScrollToPosition(position)
         }
+
+        carPagerAdapter.updateCars(filtered)
+        recyclerViewCars.scrollToPosition(0)
     }
 
     private fun openPaymentPage(car: Car, duration: String, price: Int) {
@@ -226,11 +204,5 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onDestroy() {
-        mainMediator?.detach()
-        mainMediator = null
-        super.onDestroy()
     }
 }
