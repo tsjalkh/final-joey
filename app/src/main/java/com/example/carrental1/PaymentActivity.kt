@@ -196,7 +196,7 @@ class PaymentActivity : AppCompatActivity() {
         var generatedBookingId: Long = -1
         
         if (userId != -1) {
-            val dbHelper = DatabaseHelper(this)
+            val dbHelper = DatabaseHelper.getInstance(this)
             dbHelper.updatePhone(userId, phone)
             generatedBookingId = dbHelper.addBooking(
                 userId = userId,
@@ -208,7 +208,6 @@ class PaymentActivity : AppCompatActivity() {
                 cost = basePrice.toDouble(),
                 payment = paymentMethod
             )
-            dbHelper.close()
         }
 
         // Save to SharedPrefs

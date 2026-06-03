@@ -11,6 +11,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val DATABASE_NAME = "CarRental.db"
         private const val DATABASE_VERSION = 6
 
+        @Volatile
+        private var instance: DatabaseHelper? = null
+
+        fun getInstance(context: Context): DatabaseHelper =
+            instance ?: synchronized(this) {
+                instance ?: DatabaseHelper(context.applicationContext).also { instance = it }
+            }
+
         // Table Names
         const val TABLE_CARS = "cars"
         const val TABLE_USERS = "users"

@@ -52,12 +52,14 @@ class CarPagerAdapter(
             car.description
         )
 
+        // Detach old mediator before swapping adapter to avoid stale observer notifications
+        holder.mediator?.detach()
+        holder.mediator = null
+
         // Setup Image Gallery
         val imageAdapter = CarImageAdapter(car.images)
         holder.viewPagerCarImages.adapter = imageAdapter
-        
-        // Detach old mediator safely
-        holder.mediator?.detach()
+
         if (car.images.isNotEmpty()) {
             holder.mediator = TabLayoutMediator(holder.tabLayoutIndicator, holder.viewPagerCarImages) { _, _ -> }
             holder.mediator?.attach()
