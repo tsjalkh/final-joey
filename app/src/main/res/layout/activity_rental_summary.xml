@@ -1,75 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:background="@drawable/gradient_success_bg"
+    android:fillViewport="true">
 
-    <ImageView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="32dp"
-        android:src="@android:drawable/checkbox_on_background"
-        app:tint="?attr/colorPrimary"
-        android:contentDescription="@string/success_icon" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/booking_confirmed"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-        android:textStyle="bold" />
-
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:strokeWidth="0dp">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingTop="48dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/rental_summary"
-                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                android:textColor="?attr/colorPrimary" />
+        <!-- Success Icon with circle background -->
+        <FrameLayout
+            android:id="@+id/successIconFrame"
+            android:layout_width="110dp"
+            android:layout_height="110dp">
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
-                android:background="?attr/colorOutlineVariant" />
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:background="@drawable/shape_success_icon_bg" />
 
-            <TextView
-                android:id="@+id/textSummary"
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/success_icon"
+                android:src="@android:drawable/checkbox_on_background"
+                app:tint="@color/success_green" />
+        </FrameLayout>
+
+        <!-- Confirmed Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/booking_confirmed"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textColor="@color/brand_navy"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Your rental has been confirmed!"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="@color/text_secondary" />
+
+        <!-- Summary Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="8dp"
-                android:text="@string/summary_details_placeholder"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                android:orientation="vertical"
+                android:padding="24dp">
 
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                <!-- Card Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonBackHome"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/back_to_home"
-        android:visibility="gone" />
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/brand_blue_mid" />
 
-</LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/rental_summary"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:textColor="@color/brand_navy"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@color/divider_color" />
+
+                <TextView
+                    android:id="@+id/textSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="8dp"
+                    android:text="@string/summary_details_placeholder"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonBackHome"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/back_to_home"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:backgroundTint="@color/brand_blue_mid"
+            app:cornerRadius="28dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

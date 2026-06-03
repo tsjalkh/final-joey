@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -14,17 +13,16 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
 
-    private var autoCompleteCategory: AutoCompleteTextView? = null
-    private var autoCompleteCar: AutoCompleteTextView? = null
-    private var viewPagerCars: ViewPager2? = null
-    private var tabLayoutCarIndicator: TabLayout? = null
-    
-    private var carPagerAdapter: CarPagerAdapter? = null
+    private lateinit var autoCompleteCategory: AutoCompleteTextView
+    private lateinit var autoCompleteCar: AutoCompleteTextView
+    private lateinit var viewPagerCars: ViewPager2
+    private lateinit var tabLayoutCarIndicator: TabLayout
+
+    private lateinit var carPagerAdapter: CarPagerAdapter
     private var mainMediator: TabLayoutMediator? = null
-    private var databaseHelper: DatabaseHelper? = null
+    private lateinit var databaseHelper: DatabaseHelper
 
     private var selectedCategory = "Sedans"
-    private var selectedCar: Car? = null
     private var allCarsList: List<Car> = emptyList()
 
     data class Car(
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         val dailyPrice: Int,
         val weeklyPrice: Int,
         val monthlyPrice: Int,
-        val images: List<String>,
+        val images: List<String>
     )
 
     private val carSeedList by lazy {
@@ -105,8 +103,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val toolbar: androidx.appcompat.widget.Toolbar? = findViewById(R.id.toolbar)
-        toolbar?.let { setSupportActionBar(it) }
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         autoCompleteCategory = findViewById(R.id.autoCompleteCategory)
         autoCompleteCar = findViewById(R.id.autoCompleteCar)
@@ -114,30 +112,30 @@ class MainActivity : AppCompatActivity() {
         tabLayoutCarIndicator = findViewById(R.id.tabLayoutCarIndicator)
 
         databaseHelper = DatabaseHelper.getInstance(this)
-        try {
-            databaseHelper?.seedCars(carSeedList)
-            allCarsList = databaseHelper?.getAllCars() ?: emptyList()
+        allCarsList = try {
+            databaseHelper.seedCars(carSeedList)
+            databaseHelper.getAllCars()
         } catch (e: Exception) {
             android.util.Log.e("MainActivity", "DB load error", e)
-            allCarsList = emptyList()
-            Toast.makeText(this, "Error loading car data. Please try restarting the app.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Error loading car data. Please restart the app.", Toast.LENGTH_LONG).show()
+            emptyList()
         }
 
         setupCategoryDropdown()
         setupCarPager()
 
-        viewPagerCars?.post {
+        viewPagerCars.post {
             loadCarsByCategory(selectedCategory)
         }
     }
 
     private fun setupCategoryDropdown() {
         val categories = listOf("Sedans", "SUVs", "Sports Cars")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
-        autoCompleteCategory?.setAdapter(adapter)
-        autoCompleteCategory?.setText(categories[0], false)
-        
-        autoCompleteCategory?.setOnItemClickListener { _, _, position, _ ->
+        autoCompleteCategory.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
+        )
+        autoCompleteCategory.setText(categories[0], false)
+        autoCompleteCategory.setOnItemClickListener { _, _, position, _ ->
             loadCarsByCategory(categories[position])
         }
     }
@@ -146,63 +144,57 @@ class MainActivity : AppCompatActivity() {
         carPagerAdapter = CarPagerAdapter(this, emptyList()) { car, duration, price, _ ->
             openPaymentPage(car, duration, price)
         }
-        
-        viewPagerCars?.adapter = carPagerAdapter
-        
-        viewPagerCars?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        viewPagerCars.adapter = carPagerAdapter
+
+        viewPagerCars.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                val filteredCars = allCarsList.filter { it.category == selectedCategory }
-                if (position >= 0 && position < filteredCars.size) {
-                    selectedCar = filteredCars[position]
-                    autoCompleteCar?.setText(selectedCar?.name, false)
+                val filtered = allCarsList.filter { it.category == selectedCategory }
+                if (position in filtered.indices) {
+                    autoCompleteCar.setText(filtered[position].name, false)
                 }
             }
         })
+
+        autoCompleteCar.setOnItemClickListener { _, _, position, _ ->
+            viewPagerCars.setCurrentItem(position, true)
+        }
     }
 
     private fun loadCarsByCategory(category: String) {
         selectedCategory = category
-        val filteredCars = allCarsList.filter { it.category == category }
-        val carNames = filteredCars.map { it.name }
-        
-        val carAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, carNames)
-        autoCompleteCar?.setAdapter(carAdapter)
-        
-        carPagerAdapter?.updateCars(filteredCars)
-        
-        try {
-            mainMediator?.detach()
-            val indicator = tabLayoutCarIndicator
-            val pager = viewPagerCars
-            if (indicator != null && pager != null && filteredCars.isNotEmpty()) {
-                mainMediator = TabLayoutMediator(indicator, pager) { _, _ -> }
-                mainMediator?.attach()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val filtered = allCarsList.filter { it.category == category }
+
+        autoCompleteCar.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filtered.map { it.name })
+        )
+
+        mainMediator?.detach()
+        mainMediator = null
+
+        carPagerAdapter.updateCars(filtered)
+
+        viewPagerCars.setCurrentItem(0, false)
+
+        if (filtered.isNotEmpty()) {
+            autoCompleteCar.setText(filtered[0].name, false)
         }
 
-        viewPagerCars?.setCurrentItem(0, false)
-        
-        if (filteredCars.isNotEmpty()) {
-            selectedCar = filteredCars[0]
-            autoCompleteCar?.setText(selectedCar?.name, false)
-        }
-        
-        autoCompleteCar?.setOnItemClickListener { _, _, position, _ ->
-            viewPagerCars?.setCurrentItem(position, true)
+        if (filtered.isNotEmpty()) {
+            mainMediator = TabLayoutMediator(tabLayoutCarIndicator, viewPagerCars) { _, _ -> }
+            mainMediator!!.attach()
         }
     }
 
     private fun openPaymentPage(car: Car, duration: String, price: Int) {
-        val intent = Intent(this, PaymentActivity::class.java).apply {
+        startActivity(Intent(this, PaymentActivity::class.java).apply {
             putExtra("carId", car.id)
             putExtra("carName", car.name)
             putExtra("duration", duration)
             putExtra("price", price)
             putExtra("dailyPrice", car.dailyPrice)
-        }
-        startActivity(intent)
+        })
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -211,24 +203,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menuSedans -> { loadCarsByCategory("Sedans"); return true }
-            R.id.menuSUVs -> { loadCarsByCategory("SUVs"); return true }
-            R.id.menuSports -> { loadCarsByCategory("Sports Cars"); return true }
-            R.id.menuProfile -> { startActivity(Intent(this, ProfileActivity::class.java)); return true }
-            R.id.menuSupport -> { Toast.makeText(this, "Support: Call +961 70 000 000", Toast.LENGTH_LONG).show(); return true }
+        return when (item.itemId) {
+            R.id.menuSedans -> { loadCarsByCategory("Sedans"); true }
+            R.id.menuSUVs -> { loadCarsByCategory("SUVs"); true }
+            R.id.menuSports -> { loadCarsByCategory("Sports Cars"); true }
+            R.id.menuProfile -> {
+                startActivity(Intent(this, ProfileActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                true
+            }
+            R.id.menuSupport -> {
+                Toast.makeText(this, "Support: Call +961 70 000 000", Toast.LENGTH_LONG).show(); true
+            }
             R.id.menuLogout -> {
                 getSharedPreferences("UserData", MODE_PRIVATE).edit { clear() }
                 startActivity(Intent(this, LoginActivity::class.java))
+                @Suppress("DEPRECATION")
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
                 finish()
-                return true
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {
+        mainMediator?.detach()
+        mainMediator = null
         super.onDestroy()
-        // Singleton connection is managed globally — do not close here
     }
 }

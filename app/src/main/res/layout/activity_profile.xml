@@ -4,22 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/background_light"
     tools:context=".ProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@drawable/gradient_toolbar"
+        app:elevation="8dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarProfile"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="#FFFFFF"
             app:title="@string/my_account"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            app:titleTextColor="#FFFFFF" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -31,37 +33,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
-            <!-- Profile Header -->
+            <!-- Profile Header Card (gradient) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="?attr/colorOutlineVariant">
+                app:cardElevation="6dp"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/shape_profile_header_bg"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:padding="28dp">
 
+                    <!-- Profile Photo -->
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="120dp"
-                        android:layout_height="120dp"
-                        app:cardCornerRadius="60dp"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="0dp">
+                        android:layout_width="108dp"
+                        android:layout_height="108dp"
+                        app:cardCornerRadius="54dp"
+                        app:cardElevation="6dp"
+                        app:strokeWidth="3dp"
+                        app:strokeColor="#F59E0B">
 
                         <ImageView
                             android:id="@+id/imageProfile"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
                             android:contentDescription="@string/profile_picture_desc"
+                            android:scaleType="centerCrop"
                             android:src="@android:drawable/ic_menu_gallery" />
                     </com.google.android.material.card.MaterialCardView>
 
@@ -70,43 +74,47 @@
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/change_photo" />
+                        android:layout_marginTop="6dp"
+                        android:text="@string/change_photo"
+                        android:textColor="#F59E0B" />
 
                     <TextView
                         android:id="@+id/textProfileName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:text="@string/full_name"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                        android:textColor="#FFFFFF"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/textProfileEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:text="@string/email"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                        android:textColor="?attr/colorOutline" />
+                        android:textColor="#AACCFF" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Detailed Info Section -->
+            <!-- Profile Info Card -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/profile_info"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                android:textColor="?attr/colorPrimary" />
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@color/brand_navy"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp">
 
@@ -114,68 +122,117 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
+                    <!-- Phone Row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/shape_icon_bg_blue"
+                            android:contentDescription="Phone"
+                            android:padding="8dp"
+                            android:src="@android:drawable/ic_menu_call"
+                            app:tint="@color/brand_blue_mid" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/phone_label"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/textProfilePhone"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/car_info_placeholder" />
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/phone_label"
+                                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                                android:textColor="@color/text_secondary" />
+
+                            <TextView
+                                android:id="@+id/textProfilePhone"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/car_info_placeholder"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                android:textColor="@color/brand_navy"
+                                android:textStyle="bold" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:background="?attr/colorOutlineVariant" />
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@color/divider_color" />
 
+                    <!-- Payment Method Row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/shape_icon_bg_blue"
+                            android:contentDescription="Payment"
+                            android:padding="8dp"
+                            android:src="@android:drawable/ic_menu_manage"
+                            app:tint="@color/brand_blue_mid" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/payment_method_label"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/textProfilePayment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/car_info_placeholder" />
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/payment_method_label"
+                                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                                android:textColor="@color/text_secondary" />
+
+                            <TextView
+                                android:id="@+id/textProfilePayment"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/car_info_placeholder"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                android:textColor="@color/brand_navy"
+                                android:textStyle="bold" />
+                        </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Rental History Section -->
+            <!-- Rental History Card -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/rental_history"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                android:textColor="?attr/colorPrimary" />
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@color/brand_navy"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardRentalHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="2dp"
                 app:strokeWidth="0dp">
 
@@ -183,15 +240,42 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/shape_icon_bg_blue"
+                            android:contentDescription="History"
+                            android:padding="8dp"
+                            android:src="@android:drawable/ic_menu_recent_history"
+                            app:tint="@color/brand_blue_mid" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:text="Latest Booking"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/brand_navy"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/textRentalDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/no_rentals_yet"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                        android:lineSpacingExtra="4dp" />
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/text_secondary"
+                        android:lineSpacingExtra="5dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

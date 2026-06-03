@@ -17,6 +17,10 @@ class CarPagerAdapter(
     private val onPackageSelected: (MainActivity.Car, String, Int, Long) -> Unit
 ) : RecyclerView.Adapter<CarPagerAdapter.ViewHolder>() {
 
+    init {
+        setHasStableIds(true)
+    }
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val viewPagerCarImages: ViewPager2 = view.findViewById(R.id.viewPagerCarImages)
         val tabLayoutIndicator: TabLayout = view.findViewById(R.id.tabLayoutIndicator)
@@ -25,9 +29,11 @@ class CarPagerAdapter(
         val btnRentDay: MaterialButton = view.findViewById(R.id.btnRentDay)
         val btnRentWeek: MaterialButton = view.findViewById(R.id.btnRentWeek)
         val btnRentMonth: MaterialButton = view.findViewById(R.id.btnRentMonth)
-        
         var mediator: TabLayoutMediator? = null
     }
+
+    override fun getItemId(position: Int): Long =
+        if (position in cars.indices) cars[position].id.hashCode().toLong() else position.toLong()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_car_page, parent, false)
@@ -35,37 +41,33 @@ class CarPagerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position < 0 || position >= cars.size) return
+        if (position !in cars.indices) return
         val car = cars[position]
-        
-        holder.textCarName.text = car.name
-        holder.textCarInfo.text = context.getString(
-            R.string.car_details_format,
-            car.name,
-            car.engine,
-            car.power,
-            car.drivetrain,
-            car.seats,
-            car.dailyPrice,
-            car.weeklyPrice,
-            car.monthlyPrice,
-            car.description
-        )
 
-        // Detach old mediator before swapping adapter to avoid stale observer notifications
+        holder.textCarName.text = car.name
+        holder.textCarInfo.text = buildString {
+            append("${car.engine}  •  ${car.power}\n")
+            append("${car.drivetrain}  •  ${car.seats} seats\n\n")
+            append(car.description)
+        }
+
+        // Show price prominently on each button
+        holder.btnRentDay.text = "1 Day  —  \$${car.dailyPrice}"
+        holder.btnRentWeek.text = "1 Week  —  \$${car.weeklyPrice}"
+        holder.btnRentMonth.text = "1 Month  —  \$${car.monthlyPrice}"
+
+        // Detach stale inner mediator before swapping the image adapter
         holder.mediator?.detach()
         holder.mediator = null
 
-        // Setup Image Gallery
         val imageAdapter = CarImageAdapter(car.images)
         holder.viewPagerCarImages.adapter = imageAdapter
 
         if (car.images.isNotEmpty()) {
             holder.mediator = TabLayoutMediator(holder.tabLayoutIndicator, holder.viewPagerCarImages) { _, _ -> }
-            holder.mediator?.attach()
+            holder.mediator!!.attach()
         }
 
-        // Setup Listeners
         holder.btnRentDay.setOnClickListener {
             onPackageSelected(car, "1 day", car.dailyPrice, 24L * 60 * 60 * 1000)
         }
