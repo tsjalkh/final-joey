@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var carPagerAdapter: CarPagerAdapter
     private lateinit var databaseHelper: DatabaseHelper
 
-    private var selectedCategory = "Sedans"
+    private var selectedCategory = "All"
     private var allCarsList: List<Car> = emptyList()
 
     data class Car(
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupCategoryDropdown() {
-        val categories = listOf("Sedans", "SUVs", "Sports Cars")
+        val categories = listOf("All", "Sedans", "SUVs", "Sports Cars")
         autoCompleteCategory.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, categories)
         )
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadCarsByCategory(category: String) {
         selectedCategory = category
-        val filtered = allCarsList.filter { it.category == category }
+        val filtered = if (category == "All") allCarsList else allCarsList.filter { it.category == category }
 
         autoCompleteCar.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filtered.map { it.name })
@@ -178,9 +178,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menuSedans -> { loadCarsByCategory("Sedans"); true }
-            R.id.menuSUVs -> { loadCarsByCategory("SUVs"); true }
-            R.id.menuSports -> { loadCarsByCategory("Sports Cars"); true }
+            R.id.menuAllCars -> {
+                autoCompleteCategory.setText("All", false)
+                loadCarsByCategory("All"); true
+            }
+            R.id.menuSedans -> {
+                autoCompleteCategory.setText("Sedans", false)
+                loadCarsByCategory("Sedans"); true
+            }
+            R.id.menuSUVs -> {
+                autoCompleteCategory.setText("SUVs", false)
+                loadCarsByCategory("SUVs"); true
+            }
+            R.id.menuSports -> {
+                autoCompleteCategory.setText("Sports Cars", false)
+                loadCarsByCategory("Sports Cars"); true
+            }
             R.id.menuProfile -> {
                 startActivity(Intent(this, ProfileActivity::class.java))
                 @Suppress("DEPRECATION")
