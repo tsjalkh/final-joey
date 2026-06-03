@@ -6,12 +6,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
     private lateinit var autoCompleteCategory: AutoCompleteTextView
     private lateinit var autoCompleteCar: AutoCompleteTextView
     private lateinit var recyclerViewCars: RecyclerView
@@ -97,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         autoCompleteCategory = findViewById(R.id.autoCompleteCategory)
@@ -117,9 +119,19 @@ class MainActivity : AppCompatActivity() {
 
         setupCarList()
         setupCategoryDropdown()
+        setupHamburgerMenu()
 
         recyclerViewCars.post {
             loadCarsByCategory(selectedCategory)
+        }
+    }
+
+    private fun setupHamburgerMenu() {
+        toolbar.setNavigationOnClickListener { view ->
+            val popup = PopupMenu(this, view)
+            popup.menuInflater.inflate(R.menu.carmenu, popup.menu)
+            popup.setOnMenuItemClickListener { item -> onOptionsItemSelected(item) }
+            popup.show()
         }
     }
 
@@ -176,10 +188,7 @@ class MainActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.slide_up_in, R.anim.fade_out)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.carmenu, menu)
-        return true
-    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean = false
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
