@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car Rental Service</string>
+    <string name="app_name">CedarDrive</string>
     <string name="support">Support</string>
     <string name="logout">Logout</string>
     <string name="category_format">Category: %1$s</string>
@@ -23,7 +23,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="trusted_rental_service">Your Trusted Car Rental Service</string>
+    <string name="trusted_rental_service">Rent. Drive. Discover Lebanon.</string>
     <string name="full_name_hint">Full Name</string>
     <string name="rental_summary">Rental Summary</string>
     <string name="confirm_rental">Confirm Rental</string>
