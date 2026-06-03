@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var autoCompleteCategory: AutoCompleteTextView
     private lateinit var autoCompleteCar: AutoCompleteTextView
     private lateinit var recyclerViewCars: RecyclerView
+    private lateinit var nestedScrollView: androidx.core.widget.NestedScrollView
 
     private lateinit var carPagerAdapter: CarPagerAdapter
     private lateinit var databaseHelper: DatabaseHelper
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         autoCompleteCategory = findViewById(R.id.autoCompleteCategory)
         autoCompleteCar = findViewById(R.id.autoCompleteCar)
         recyclerViewCars = findViewById(R.id.recyclerViewCars)
+        nestedScrollView = findViewById(R.id.nestedScrollView)
 
         databaseHelper = DatabaseHelper.getInstance(this)
         allCarsList = try {
@@ -147,16 +149,19 @@ class MainActivity : AppCompatActivity() {
         autoCompleteCar.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, filtered.map { it.name })
         )
-        if (filtered.isNotEmpty()) {
-            autoCompleteCar.setText(filtered[0].name, false)
-        }
+        autoCompleteCar.setText("", false)
 
         autoCompleteCar.setOnItemClickListener { _, _, position, _ ->
-            recyclerViewCars.smoothScrollToPosition(position)
+            recyclerViewCars.post {
+                val lm = recyclerViewCars.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
+                val target = lm.findViewByPosition(position)
+                val scrollTo = recyclerViewCars.top + (target?.top ?: (position * recyclerViewCars.getChildAt(0)?.height!!))
+                nestedScrollView.smoothScrollTo(0, scrollTo)
+            }
         }
 
         carPagerAdapter.updateCars(filtered)
-        recyclerViewCars.scrollToPosition(0)
+        nestedScrollView.scrollTo(0, 0)
     }
 
     private fun openPaymentPage(car: Car, duration: String, price: Int) {
