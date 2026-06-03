@@ -35,9 +35,8 @@ class SignUpActivity : AppCompatActivity() {
 
             if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                 if (isValidPassword(password)) {
-                    val dbHelper = DatabaseHelper(this)
+                    val dbHelper = DatabaseHelper.getInstance(this)
                     val result = dbHelper.addUser(name, email, password)
-                    dbHelper.close()
 
                     if (result != -1L) {
                         showSuccessDialog()

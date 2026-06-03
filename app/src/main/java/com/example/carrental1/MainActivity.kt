@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         viewPagerCars = findViewById(R.id.viewPagerCars)
         tabLayoutCarIndicator = findViewById(R.id.tabLayoutCarIndicator)
 
-        databaseHelper = DatabaseHelper(this)
+        databaseHelper = DatabaseHelper.getInstance(this)
         try {
             databaseHelper?.seedCars(carSeedList)
             allCarsList = databaseHelper?.getAllCars() ?: emptyList()
@@ -229,6 +229,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        databaseHelper?.close()
+        // Singleton connection is managed globally — do not close here
     }
 }

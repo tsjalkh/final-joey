@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/menuSedans"
         android:title="Sedans"
-        app:showAsAction="never" />
+        android:showAsAction="never" />
 
     <item
         android:id="@+id/menuSUVs"
         android:title="SUVs"
-        app:showAsAction="never" />
+        android:showAsAction="never" />
 
     <item
         android:id="@+id/menuSports"
         android:title="Sports Cars"
-        app:showAsAction="never" />
+        android:showAsAction="never" />
 
     <group android:id="@+id/groupUser">
         <item
             android:id="@+id/menuProfile"
             android:title="My Account"
-            app:showAsAction="never" />
+            android:showAsAction="never" />
         <item
             android:id="@+id/menuSupport"
             android:title="Support"
-            app:showAsAction="never" />
+            android:showAsAction="never" />
         <item
             android:id="@+id/menuLogout"
             android:title="Logout"
-            app:showAsAction="never" />
+            android:showAsAction="never" />
     </group>
 
 </menu>
