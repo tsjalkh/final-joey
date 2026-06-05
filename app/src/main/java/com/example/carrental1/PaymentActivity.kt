@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -81,6 +82,7 @@ class PaymentActivity : AppCompatActivity() {
 
         setupDatePickers()
         setupPaymentToggle()
+        setupCardFields()
         animateContentIn()
 
         buttonConfirm.setOnClickListener { confirmRental() }
@@ -257,6 +259,51 @@ class PaymentActivity : AppCompatActivity() {
         @Suppress("DEPRECATION")
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         finish()
+    }
+
+    private fun setupCardFields() {
+        editExpiryDate.setOnClickListener { showExpiryPicker() }
+    }
+
+    private fun showExpiryPicker() {
+        val now = Calendar.getInstance()
+        val monthPicker = NumberPicker(this).apply {
+            minValue = 1
+            maxValue = 12
+            displayedValues = arrayOf("01","02","03","04","05","06","07","08","09","10","11","12")
+            value = now.get(Calendar.MONTH) + 1
+        }
+        val currentYear = now.get(Calendar.YEAR)
+        val yearPicker = NumberPicker(this).apply {
+            minValue = currentYear
+            maxValue = currentYear + 10
+            value = currentYear
+        }
+
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+            setPadding(48, 24, 48, 0)
+        }
+        row.addView(monthPicker)
+        row.addView(TextView(this).apply {
+            text = "/"
+            textSize = 22f
+            setPadding(16, 0, 16, 0)
+            gravity = Gravity.CENTER_VERTICAL
+        })
+        row.addView(yearPicker)
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Select Expiry Date")
+            .setView(row)
+            .setPositiveButton("OK") { _, _ ->
+                val mm = String.format("%02d", monthPicker.value)
+                val yy = yearPicker.value.toString().takeLast(2)
+                editExpiryDate.setText("$mm/$yy")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun scheduleRentalEndNotification(endCal: Calendar, car: String, bookingId: Long) {
