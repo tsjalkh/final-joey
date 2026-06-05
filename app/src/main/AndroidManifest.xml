@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -55,6 +57,10 @@
             android:exported="false"
             android:label="Payment"
             android:theme="@style/Theme.CarRental1.NoActionBar" />
+
+        <receiver
+            android:name=".RentalEndReceiver"
+            android:exported="false" />
 
     </application>
 

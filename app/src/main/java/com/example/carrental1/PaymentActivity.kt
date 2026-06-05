@@ -1,8 +1,16 @@
 package com.example.carrental1
 
+import android.Manifest
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -74,6 +82,7 @@ class PaymentActivity : AppCompatActivity() {
 
         setupDatePickers()
         setupPaymentToggle()
+        setupCardFields()
         animateContentIn()
 
         buttonConfirm.setOnClickListener { confirmRental() }
@@ -223,6 +232,8 @@ class PaymentActivity : AppCompatActivity() {
             )
         }
 
+        scheduleRentalEndNotification(endDate, carName, bookingId)
+
         getSharedPreferences("RentalData", MODE_PRIVATE).edit {
             putString("carName", carName)
             putString("carId", carId)
@@ -248,6 +259,85 @@ class PaymentActivity : AppCompatActivity() {
         @Suppress("DEPRECATION")
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         finish()
+    }
+
+    private fun setupCardFields() {
+        editExpiryDate.setOnClickListener { showExpiryPicker() }
+    }
+
+    private fun showExpiryPicker() {
+        val now = Calendar.getInstance()
+        val monthPicker = NumberPicker(this).apply {
+            minValue = 1
+            maxValue = 12
+            displayedValues = arrayOf("01","02","03","04","05","06","07","08","09","10","11","12")
+            value = now.get(Calendar.MONTH) + 1
+        }
+        val currentYear = now.get(Calendar.YEAR)
+        val yearPicker = NumberPicker(this).apply {
+            minValue = currentYear
+            maxValue = currentYear + 10
+            value = currentYear
+        }
+
+        val row = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER
+            setPadding(48, 24, 48, 0)
+        }
+        row.addView(monthPicker)
+        row.addView(TextView(this).apply {
+            text = "/"
+            textSize = 22f
+            setPadding(16, 0, 16, 0)
+            gravity = Gravity.CENTER_VERTICAL
+        })
+        row.addView(yearPicker)
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Select Expiry Date")
+            .setView(row)
+            .setPositiveButton("OK") { _, _ ->
+                val mm = String.format("%02d", monthPicker.value)
+                val yy = yearPicker.value.toString().takeLast(2)
+                editExpiryDate.setText("$mm/$yy")
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun scheduleRentalEndNotification(endCal: Calendar, car: String, bookingId: Long) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                RentalEndReceiver.CHANNEL_ID, "Rental Reminders", NotificationManager.IMPORTANCE_HIGH
+            ).apply { description = "Notifies you when your rental period ends" }
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+        }
+
+        // TEMP: fire in 10 seconds for testing
+        val notifyAt = System.currentTimeMillis() + 10_000
+
+        val intent = Intent(this, RentalEndReceiver::class.java).apply {
+            putExtra("carName", car)
+            putExtra("bookingId", bookingId)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this, bookingId.toInt(), intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, notifyAt, pendingIntent)
+        } else {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, notifyAt, pendingIntent)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
